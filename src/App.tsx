@@ -119,7 +119,7 @@ export default function App() {
       {shouldShowProtectedLoading ? (
         <LoadingScreen />
       ) : isHome ? (
-        <>
+        <div className="landing-shell">
           <Header />
           <main id="conteudo">
             <Hero />
@@ -130,7 +130,7 @@ export default function App() {
             <FinalCta />
           </main>
           <Footer />
-        </>
+        </div>
       ) : route.page === 'app' ? (
         <AppPlaceholder onExcluido={() => navigate('/onboarding?aviso=perfil-excluido')} />
       ) : route.page === 'onboarding' ? (

@@ -14,7 +14,7 @@ export function Footer() {
           <a href="/login">Entrar</a>
         </nav>
       </div>
-      <div className="container footer-bottom"><span>© 2026 Nexo</span><span>Startups e investidores, conectados.</span></div>
+      <div className="container footer-bottom"><span>© 2026 Altura</span><span>Startups e investidores, conectados.</span></div>
     </footer>
   )
 }

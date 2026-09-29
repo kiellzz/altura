@@ -1,5 +1,6 @@
 import { segmentos } from '../data/landing'
 import { Reveal } from './Reveal'
+import { SegmentIcon } from './SegmentIcon'
 
 export function Segments() {
   return (
@@ -14,7 +15,8 @@ export function Segments() {
         <Reveal className="segment-cloud" delay={80}>
           {segmentos.map((segmento, index) => (
             <button type="button" className={index === 0 || index === 5 ? 'is-highlighted' : ''} key={segmento.id}>
-              <span aria-hidden="true" />{segmento.nome}
+              <SegmentIcon nome={segmento.nome} />
+              {segmento.nome}
             </button>
           ))}
         </Reveal>

@@ -9,7 +9,7 @@ export function Faq() {
         <Reveal className="section-heading section-heading-left">
           <p className="kicker">Perguntas frequentes</p>
           <h2 id="faq-title">Antes de criar seu perfil.</h2>
-          <p>O essencial para entender como a primeira conexão acontece no Nexo.</p>
+          <p>O essencial para entender como a primeira conexão acontece na Altura.</p>
         </Reveal>
         <div className="faq-list">
           {faqs.map((faq, index) => (

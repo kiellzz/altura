@@ -1,10 +1,10 @@
 import type { CSSProperties } from 'react'
-import { ArrowRight, HandCoins, Info, Sparkles } from 'lucide-react'
+import { ArrowRight, HandCoins, Info } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import heroMp4 from '../assets/handshake-hero.mp4'
 import heroWebm from '../assets/handshake-hero.webm'
 import heroPoster from '../assets/hero-poster.jpg'
-import startupImage from '../assets/generic_Startup.jpg'
+import startupImage from '../assets/generic_Startup.png'
 import {
   captacaoExemplo,
   currencyFormatter,
@@ -35,10 +35,8 @@ export function Hero() {
 
   return (
     <section id="top" className="hero" aria-labelledby="hero-title">
-      <div className="hero-network" aria-hidden="true" />
       <div className="container hero-grid">
         <div className="hero-copy">
-          <p className="eyebrow"><Sparkles size={16} aria-hidden="true" />{hero.eyebrow}</p>
           <h1 id="hero-title">{hero.title}</h1>
           <p className="hero-description">{hero.description}</p>
           <div className="hero-actions">

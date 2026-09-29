@@ -4,6 +4,7 @@ import { signOut } from '../auth/authApi'
 import { useAuth } from '../auth/useAuth'
 import { navItems } from '../data/landing'
 import { Brand } from './Brand'
+import { ThemeToggle } from './ThemeToggle'
 
 const focusableSelector = 'a[href], button:not([disabled])'
 
@@ -68,10 +69,11 @@ export function Header() {
           {navItems.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
         </nav>
         <div className="desktop-actions">
+          <ThemeToggle />
           {isLoggedIn ? (
             <>
               <span className="user-greeting">Olá, {usuario?.nome || 'bem-vindo(a)'}!</span>
-              <a className="button button-navy button-compact" href={accessHref}>Acessar o Nexo</a>
+              <a className="button button-navy button-compact" href={accessHref}>Acessar a Altura</a>
               <button className="button button-ghost button-compact" type="button" onClick={() => void signOut()}>Sair</button>
             </>
           ) : (
@@ -107,10 +109,11 @@ export function Header() {
               {navItems.map((item) => <a key={item.href} href={item.href} onClick={close}>{item.label}</a>)}
             </nav>
             <div className="mobile-actions">
+              <ThemeToggle showLabel />
               {isLoggedIn ? (
                 <>
                   <p className="mobile-greeting">Olá, {usuario?.nome || 'bem-vindo(a)'}!</p>
-                  <a className="button button-navy" href={accessHref} onClick={close}>Acessar o Nexo</a>
+                  <a className="button button-navy" href={accessHref} onClick={close}>Acessar a Altura</a>
                   <button className="button button-outline" type="button" onClick={() => { close(); void signOut() }}>Sair</button>
                 </>
               ) : (

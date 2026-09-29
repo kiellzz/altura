@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { signIn, signUp } from '../auth/authApi'
 import { auth, type TipoUsuario } from '../data/landing'
 import { Brand } from './Brand'
+import { ThemeToggle } from './ThemeToggle'
 
 type AuthMode = 'login' | 'register'
 
@@ -120,15 +121,18 @@ export function AuthPage({ mode, initialRole = 'startup' }: AuthPageProps) {
           <div className="auth-card">
             <div className="auth-top">
               <Brand />
-              <a className="auth-back" href="/login">
-                <ArrowLeft size={17} aria-hidden="true" />
-                Entrar
-              </a>
+              <div className="auth-top-actions">
+                <ThemeToggle />
+                <a className="auth-back" href="/login">
+                  <ArrowLeft size={17} aria-hidden="true" />
+                  Entrar
+                </a>
+              </div>
             </div>
             <p className="kicker">Confirme seu e-mail</p>
             <h1 id="auth-title">Quase lá.</h1>
             <p className="auth-description">
-              Enviamos um link de confirmação para <strong>{confirmationEmail}</strong>. Depois de confirmar, volte para entrar no Nexo.
+              Enviamos um link de confirmação para <strong>{confirmationEmail}</strong>. Depois de confirmar, volte para entrar na Altura.
             </p>
             <a className="button button-navy auth-submit" href="/login">Ir para login</a>
           </div>
@@ -144,10 +148,13 @@ export function AuthPage({ mode, initialRole = 'startup' }: AuthPageProps) {
         <div className="auth-card">
           <div className="auth-top">
             <Brand />
-            <a className="auth-back" href="/">
-              <ArrowLeft size={17} aria-hidden="true" />
-              {auth.backHome}
-            </a>
+            <div className="auth-top-actions">
+              <ThemeToggle />
+              <a className="auth-back" href="/">
+                <ArrowLeft size={17} aria-hidden="true" />
+                {auth.backHome}
+              </a>
+            </div>
           </div>
 
           <p className="kicker">{copy.eyebrow}</p>
@@ -246,7 +253,7 @@ export function AuthPage({ mode, initialRole = 'startup' }: AuthPageProps) {
 
 function AuthAside() {
   return (
-    <aside className="auth-aside" aria-label="Resumo da proposta Nexo">
+    <aside className="auth-aside" aria-label="Resumo da proposta Altura">
       <div className="auth-aside-content">
         <p>{auth.sidePanel.eyebrow}</p>
         <h2>{auth.sidePanel.title}</h2>

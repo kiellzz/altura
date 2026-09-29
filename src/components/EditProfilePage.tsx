@@ -21,6 +21,7 @@ import { validarUrlLinkedin, validarUrlWeb, validarUrlYoutube } from '../utils/v
 import { carregarRascunho, limparRascunho, salvarRascunho } from '../utils/perfilDraft'
 import { buscarLocalizacaoPorCoordenadas } from '../utils/localizacao'
 import { Brand } from './Brand'
+import { ThemeToggle } from './ThemeToggle'
 import { RangeSlider } from './RangeSlider'
 import { StartupProfilePreview } from './StartupProfilePreview'
 import { InvestorProfilePreview } from './InvestorProfilePreview'
@@ -404,6 +405,7 @@ export function EditProfilePage({ onCancel, onSave }: EditProfilePageProps) {
           <div className="auth-top">
             <Brand />
             <div className="onboarding-actions">
+              <ThemeToggle />
               <button className="button button-ghost button-compact" type="button" onClick={onCancel}>
                 <ArrowLeft size={17} aria-hidden="true" />
                 Voltar

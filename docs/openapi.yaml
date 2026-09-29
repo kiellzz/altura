@@ -1,17 +1,17 @@
 openapi: 3.1.0
 servers:
   - url: 'https://{refProjeto}.supabase.co'
-    description: Projeto Supabase do Nexo (GoTrue em /auth/v1, PostgREST em /rest/v1).
+    description: Projeto Supabase da Altura (GoTrue em /auth/v1, PostgREST em /rest/v1).
     variables:
       refProjeto:
         default: seu-projeto
         description: Ref/identificador do projeto Supabase.
 info:
-  title: API Nexo
+  title: API Altura
   version: 1.0.0
-  summary: API do Nexo servida pelo Supabase (Auth + PostgREST) e consumida pelo front React.
+  summary: API da Altura servida pelo Supabase (Auth + PostgREST) e consumida pelo front React.
   description: |
-    O Nexo não possui um backend próprio: a API é a do **Supabase**, composta pelo
+    A Altura não possui um backend próprio: a API é a do **Supabase**, composta pelo
     **GoTrue (Auth)** e pelo **PostgREST (banco PostgreSQL + RLS)**. Esta especificação
     documenta a API **como é consumida pelo front** (`src/auth`, `src/lib/perfilApi.ts`
     e as páginas), usando caminhos conceituais mapeados para as chamadas reais
@@ -92,7 +92,7 @@ paths:
                   description: |
                     Senha do usuário. Regras do front: mínimo de 8 caracteres,
                     contendo ao menos uma letra e ao menos um número.
-                  examples: [nexo2026seguro]
+                  examples: [altura2026seguro]
                 tipo:
                   type: string
                   enum: [startup, investidor]
@@ -109,14 +109,14 @@ paths:
                 summary: Cadastro de startup
                 value:
                   email: ana.silva@exemplo.com
-                  senha: nexo2026seguro
+                  senha: altura2026seguro
                   tipo: startup
                   nome: Ana Silva
               investidor:
                 summary: Cadastro de investidor
                 value:
                   email: roberto.campos@exemplo.com
-                  senha: nexo2026seguro
+                  senha: altura2026seguro
                   tipo: investidor
                   nome: Roberto Campos
       responses:
@@ -180,13 +180,13 @@ paths:
                 senha:
                   type: string
                   minLength: 1
-                  examples: [nexo2026seguro]
+                  examples: [altura2026seguro]
             examples:
               exemplo:
                 summary: Login
                 value:
                   email: ana.silva@exemplo.com
-                  senha: nexo2026seguro
+                  senha: altura2026seguro
       responses:
         '200':
           description: Credenciais válidas; sessão estabelecida.

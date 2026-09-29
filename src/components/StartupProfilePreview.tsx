@@ -1,4 +1,5 @@
 import { ArrowRight, Info, TrendingUp } from 'lucide-react'
+import genericStartupImage from '../assets/generic_Startup.png'
 import { SegmentIcon } from './SegmentIcon'
 
 interface StartupProfilePreviewProps {
@@ -44,7 +45,7 @@ export function StartupProfilePreview({
       <div className="startup-profile-preview-card">
         <div className="startup-profile-preview-header">
           <div className="startup-profile-preview-logo">
-            <img src="/generic_Startup.jpg" alt="" />
+            <img src={genericStartupImage} alt="" />
           </div>
           <div>
             <h3>{nome}</h3>

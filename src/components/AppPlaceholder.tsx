@@ -3,6 +3,7 @@ import { signOut } from '../auth/authApi'
 import { useAuth } from '../auth/useAuth'
 import { Brand } from './Brand'
 import { ExcluirPerfilButton } from './ExcluirPerfil'
+import { ThemeToggle } from './ThemeToggle'
 
 interface AppPlaceholderProps {
   /** Chamado após a exclusão do perfil com sucesso (leva o usuário ao /onboarding). */
@@ -20,11 +21,12 @@ export function AppPlaceholder({ onExcluido }: AppPlaceholderProps) {
           <div className="dashboard-brand">
             <Brand />
             <div className="dashboard-user-info">
-              <p className="kicker">Painel Nexo</p>
+              <p className="kicker">Painel Altura</p>
               <h1>Olá, {usuario?.nome || 'bem-vindo(a)'}</h1>
             </div>
           </div>
           <div className="dashboard-actions">
+            <ThemeToggle />
             <a className="button button-ghost button-compact" href="/editar-perfil">
               <Settings size={18} aria-hidden="true" />
               <span>Editar perfil</span>

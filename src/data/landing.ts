@@ -23,9 +23,8 @@ export const navItems = [
 ] as const
 
 export const hero = {
-  eyebrow: 'Startups e investidores, conectados',
   title: 'Onde boas ideias encontram quem investe nelas.',
-  description: 'O Nexo aproxima startups em busca de capital e investidores em busca de oportunidades, com rodadas de captação claras, match por segmento e propostas em um só lugar.',
+  description: 'A Altura aproxima startups em busca de capital e investidores em busca de oportunidades, com rodadas de captação claras, match por segmento e propostas em um só lugar.',
   actions: [
     { label: 'Sou startup', helper: 'Abra uma rodada de captação', href: '/cadastro/startup', type: 'startup' as TipoUsuario },
     { label: 'Sou investidor', helper: 'Encontre startups do seu interesse', href: '/cadastro/investidor', type: 'investidor' as TipoUsuario },
@@ -42,14 +41,14 @@ export const auth = {
     alternateCta: 'Criar conta',
     alternateHref: '/cadastro',
     fields: [
-      { id: 'email', label: 'E-mail', type: 'email', placeholder: 'voce@nexo.com.br', autoComplete: 'email' },
+      { id: 'email', label: 'E-mail', type: 'email', placeholder: 'voce@altura.com.br', autoComplete: 'email' },
       { id: 'password', label: 'Senha', type: 'password', placeholder: 'Sua senha', autoComplete: 'current-password' },
     ],
   },
   register: {
     eyebrow: 'Crie seu acesso',
     title: 'Comece pelo perfil certo para o seu momento.',
-    description: 'Escolha como você quer usar o Nexo e deixe a estrutura preparada para completar o cadastro depois.',
+    description: 'Escolha como você quer usar a Altura e deixe a estrutura preparada para completar o cadastro depois.',
     submitLabel: 'Criar conta',
     alternateLabel: 'Já tem conta?',
     alternateCta: 'Entrar',
@@ -60,13 +59,13 @@ export const auth = {
       { type: 'investidor' as TipoUsuario, label: 'Investidor', description: 'Para descobrir startups e enviar propostas.' },
     ],
     fields: [
-      { id: 'email', label: 'E-mail', type: 'email', placeholder: 'voce@nexo.com.br', autoComplete: 'email' },
+      { id: 'email', label: 'E-mail', type: 'email', placeholder: 'voce@altura.com.br', autoComplete: 'email' },
       { id: 'password', label: 'Senha', type: 'password', placeholder: 'Crie uma senha', autoComplete: 'new-password' },
       { id: 'confirmPassword', label: 'Confirmar senha', type: 'password', placeholder: 'Repita a senha', autoComplete: 'new-password' },
     ],
   },
   sidePanel: {
-    eyebrow: 'Nexo',
+    eyebrow: 'Altura',
     title: 'Uma entrada para dois fluxos de crescimento.',
     description: 'O mesmo padrão da landing segue aqui: interface clara, dados organizados e foco em aproximar bons projetos de capital inteligente.',
     stats: [
@@ -79,10 +78,10 @@ export const auth = {
 } as const
 
 export const segmentos: Segmento[] = [
-  { id: 1, nome: 'Fintech' }, { id: 2, nome: 'Healthtech' }, { id: 3, nome: 'Edtech' },
-  { id: 4, nome: 'Agritech' }, { id: 5, nome: 'Logtech' }, { id: 6, nome: 'Greentech' },
-  { id: 7, nome: 'Foodtech' }, { id: 8, nome: 'Retailtech' }, { id: 9, nome: 'Govtech' },
-  { id: 10, nome: 'SaaS B2B' },
+  { id: 1, nome: 'Finanças' }, { id: 2, nome: 'Saúde' }, { id: 3, nome: 'Educação' },
+  { id: 4, nome: 'Agricultura' }, { id: 5, nome: 'Logística' }, { id: 6, nome: 'Energia e sustentabilidade' },
+  { id: 7, nome: 'Alimentação' }, { id: 8, nome: 'Varejo' }, { id: 9, nome: 'Governo e impacto social' },
+  { id: 10, nome: 'Software e serviços digitais' },
 ]
 
 export const startupExemplo: Startup = {

@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="src/assets/logo.png" alt="Nexo Logo" width="160" />
+  <img src="src/assets/logo.png" alt="Altura Logo" width="160" />
 </p>
 
-<h1 align="center">NEXO</h1>
+<h1 align="center">ALTURA</h1>
 
 <p align="center">
   <strong>Plataforma Inteligente de Matchmaking entre Startups e Investidores</strong><br>
@@ -40,7 +40,7 @@
 
 ## 💡 Visão Geral
 
-O **NEXO** é uma plataforma web responsiva que conecta **startups em busca de captação** a **investidores com teses alinhadas**.
+A **ALTURA** é uma plataforma web responsiva que conecta **startups em busca de captação** a **investidores com teses alinhadas**.
 
 Por meio de perfis estruturados (segmento, fase, ticket, localização, links e vídeo de pitch), filtros avançados e um catálogo de rodadas abertas, a plataforma reduz o atrito e o tempo de busca no ecossistema de inovação.
 
@@ -196,7 +196,7 @@ Migrations disponíveis em `supabase/migrations/`:
 ## 📂 Estrutura do Repositório
 
 ```text
-nexo/
+altura/
 ├── public/                     # Assets estáticos (favicon, imagem genérica, robots)
 ├── src/
 │   ├── assets/                 # Imagens, vídeos e SVGs
@@ -231,7 +231,7 @@ nexo/
 
 ## 📖 Documentação da API (OpenAPI)
 
-A especificação da API do Nexo está versionada em **`docs/openapi.yaml`** (OpenAPI 3.1, campos e mensagens em PT-BR). Ela documenta **a API que já existe**: o Supabase (GoTrue + PostgREST) consumida pelo front — não há backend próprio. Os caminhos (`/auth/login`, `/startups`, `/captacoes`, `/segmentos`…) são o **mapeamento conceitual** das chamadas reais de `src/auth/authApi.ts` e `src/lib/perfilApi.ts`, não rotas HTTP nossas.
+A especificação da API da Altura está versionada em **`docs/openapi.yaml`** (OpenAPI 3.1, campos e mensagens em PT-BR). Ela documenta **a API que já existe**: o Supabase (GoTrue + PostgREST) consumida pelo front — não há backend próprio. Os caminhos (`/auth/login`, `/startups`, `/captacoes`, `/segmentos`…) são o **mapeamento conceitual** das chamadas reais de `src/auth/authApi.ts` e `src/lib/perfilApi.ts`, não rotas HTTP nossas.
 
 **Validar** (deve passar sem erros):
 
@@ -287,8 +287,8 @@ O projeto adota princípios de privacidade desde a concepção (*Privacy by Desi
 ### Passo a Passo
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/kiellzz/nexo.git
-cd nexo_p.i_2026.2
+git clone https://github.com/kiellzz/altura.git
+cd altura_p.i_2026.2
 
 # 2. Instalar as dependências
 npm install
@@ -330,5 +330,5 @@ Acesse no navegador: `http://localhost:5173`.
 ---
 
 <p align="center">
-  Desenvolvido com 💙 pelo time <strong>NEXO</strong>
+  Desenvolvido com 💙 pelo time <strong>ALTURA</strong>
 </p>

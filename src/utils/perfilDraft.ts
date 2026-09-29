@@ -1,4 +1,4 @@
-const draftPrefix = 'nexo:perfil-draft:'
+const draftPrefix = 'altura:perfil-draft:'
 
 function getDraftKey(userId: string, tipo: string) {
   return `${draftPrefix}${tipo}:${userId}`

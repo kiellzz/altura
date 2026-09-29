@@ -12,6 +12,7 @@ import { validarUrlLinkedin, validarUrlWeb, validarUrlYoutube } from '../utils/v
 import { carregarRascunho, limparRascunho, salvarRascunho } from '../utils/perfilDraft'
 import { buscarLocalizacaoPorCoordenadas } from '../utils/localizacao'
 import { Brand } from './Brand'
+import { ThemeToggle } from './ThemeToggle'
 import { RangeSlider } from './RangeSlider'
 import { StartupProfilePreview } from './StartupProfilePreview'
 import { InvestorProfilePreview } from './InvestorProfilePreview'
@@ -338,14 +339,17 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
         <div className="auth-card">
           <div className="auth-top">
             <Brand />
-            <button className="button button-ghost button-compact" type="button" onClick={() => void signOut()}>
-              <LogOut size={17} aria-hidden="true" />
-              Sair
-            </button>
+            <div className="onboarding-actions">
+              <ThemeToggle />
+              <button className="button button-ghost button-compact" type="button" onClick={() => void signOut()}>
+                <LogOut size={17} aria-hidden="true" />
+                Sair
+              </button>
+            </div>
           </div>
           <p className="kicker">Onboarding</p>
           <h1 id="onboarding-title">{title}</h1>
-          <p className="auth-description">Esses dados ajudam o Nexo a preparar seu painel inicial.</p>
+          <p className="auth-description">Esses dados ajudam a Altura a preparar seu painel inicial.</p>
           {avisoInicial && <p className="form-alert" role="status">{avisoInicial}</p>}
 
           {usuario.tipo === 'startup' ? (
