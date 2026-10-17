@@ -2,6 +2,10 @@
   <img src="src/assets/logo.png" alt="Altura Logo" width="160" />
 </p>
 
+<p align="center">
+  <img src="assets/landing.png" alt="Landing page da Altura" width="900" />
+</p>
+
 <h1 align="center">ALTURA</h1>
 
 <p align="center">
@@ -36,6 +40,7 @@ O frontend é uma SPA em **React 19 + TypeScript**; o **Spring Boot 3** cuida de
 - **Autenticação:** cadastro/login por e-mail e senha com papel (Startup ou Investidor), BCrypt, JWT curto e refresh token rotativo.
 - **Onboarding:** formulário por papel validado com Zod (CNPJ/CPF, segmentos, rodada, tração ou ticket), com rascunho automático em `localStorage`.
 - **Dashboard e perfil:** visão geral por papel, edição de perfil e prévia de como o perfil aparece para o outro lado.
+- **Perfis públicos:** visualização detalhada de startups, métricas de tração, segmentos, rodada aberta, vídeo de pitch e manifestação de interesse.
 - **Exclusão de perfil:** diálogo com confirmação em duas etapas; remove o perfil (a conta de acesso permanece) e redireciona ao onboarding.
 - **Explorar rodadas (investidor):** listagem com filtros (nome, segmento, ticket, equity mínimo), cards de oportunidade e modal com detalhes e vídeo de pitch.
 - **Gestão de rodada (startup):** edição dos termos da única rodada criada no cadastro, encerramento, cancelamento, reabertura, prazo e histórico de propostas.
@@ -44,6 +49,12 @@ O frontend é uma SPA em **React 19 + TypeScript**; o **Spring Boot 3** cuida de
 - **Indicadores reais:** os painéis usam rodadas, conexões e investimentos efetivamente registrados, sem números simulados.
 - **Atualização em tempo real:** mensagens, conexões, propostas, notificações e alterações de rodada são propagadas por WebSocket.
 - **Feed de tração:** publicações com categorias, métrica em destaque, imagem ou vídeo do YouTube, curtidas e comentários.
+- **Conexões e matches:** investidores podem demonstrar interesse em uma rodada; startups aceitam ou recusam solicitações e ambas as partes acompanham o status da conexão.
+- **Conversas privadas:** chat liberado após uma conexão aceita, com histórico persistido e atualização em tempo real via WebSocket.
+- **Contrapropostas na conversa:** depois do aceite, startup e investidor podem negociar por mensagens as condições da rodada — como valor, participação e próximos passos — e apresentar contrapropostas diretamente no chat. O histórico da negociação permanece registrado para os dois lados.
+- **Notificações:** central de notificações para novas conexões, mudanças de status, mensagens, curtidas e comentários, com contador de não lidas e ações para marcar como lidas ou limpar a lista.
+- **Feed de tração:** publicações com categorias, métrica em destaque, imagem ou vídeo do YouTube, curtidas, comentários e exclusão pelo autor.
+- **Acessibilidade e experiência:** navegação SPA com History API, rotas protegidas, estados de carregamento, transições de página, suporte a tema claro/escuro e link para pular ao conteúdo.
 
 ### Imagens do feed
 
@@ -75,6 +86,10 @@ flowchart TD
     D --> E
     E -->|Investidor| F["Explorar rodadas"]
     E -->|Ambos| G["Editar perfil / Feed"]
+    F --> H["Manifestar interesse"]
+    H --> I["Conexão aceita"]
+    I --> J["Conversas em tempo real"]
+    J --> K["Negociação e contrapropostas"]
 ```
 
 ---
@@ -122,7 +137,7 @@ Para adicionar uma tela:
 ## 🛠 Stack
 
 - **Frontend:** React 19, TypeScript, Vite 6, Tailwind CSS 4, Zod 4, lucide-react.
-- **Backend:** Java 17, Spring Boot 3, Spring Security, Spring JDBC, JWT, BCrypt.
+- **Backend:** Java 17, Spring Boot 3, Spring Security, Spring JDBC, WebSocket, JWT, BCrypt.
 - **Banco:** PostgreSQL no Neon (acesso só pelo backend, via TLS).
 - **Schema:** `database/altura_schema.sql`. Em banco existente, execute as migrations em ordem. Para esta etapa, aplique `database/20261017_rounds_proposals_realtime.sql` no Neon antes de reiniciar a API.
 
@@ -151,6 +166,16 @@ altura/
 ## 📖 API
 
 Com o backend rodando: Swagger UI em `http://localhost:8080/swagger-ui.html` e OpenAPI JSON em `http://localhost:8080/v3/api-docs`.
+
+Principais grupos de endpoints autenticados:
+
+- **Perfis e rodadas:** `/api/me`, `/api/me/startup-profile`, `/api/me/investor-profile`, `/api/startups/{userId}/details`, `/api/rounds/open`.
+- **Feed:** `/api/feed`, `/api/feed/{postId}/like` e `/api/feed/{postId}/comments`.
+- **Conexões e mensagens:** `/api/connections`, `/api/connections/{connectionId}/status` e `/api/connections/{connectionId}/messages`.
+- **Notificações:** `/api/notifications`, `/api/notifications/unread-count`, marcação individual/em massa como lida e limpeza da lista.
+
+O canal WebSocket autenticado fica disponível em `/ws` e publica eventos de novas
+mensagens e remoção de conexões para manter a tela de conversas sincronizada.
 
 ---
 
