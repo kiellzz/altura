@@ -1,4 +1,4 @@
-import { Bell, Briefcase, CheckCheck, Eye, Heart, LogOut, Megaphone, MessageCircle, Rocket, Settings, Trash2, TrendingUp, UserPlus, Users } from 'lucide-react'
+import { Bell, Briefcase, CheckCheck, Eye, Heart, LogOut, Megaphone, MessageCircle, Rocket, Settings, Sparkles, Trash2, TrendingUp, UserPlus, Users } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import genericInvestorImage from '../assets/generic_Investor.png'
 import genericStartupImage from '../assets/generic_Startup.png'
@@ -187,6 +187,21 @@ export function AppPlaceholder({ onExcluido }: AppPlaceholderProps) {
           </div>
 
           <div className={`quick-actions ${isStartup ? 'quick-actions--startup' : 'quick-actions--investor'}`}>
+            {isStartup && (
+              <a className="quick-action-card quick-action-card--intelligence" href="/app/intelligence">
+                <div className="quick-action-icon quick-action-icon--intelligence">
+                  <Sparkles size={24} aria-hidden="true" />
+                </div>
+                <div className="quick-action-content">
+                  <div className="quick-action-title-row">
+                    <h3>Altura Intelligence</h3>
+                    <span className="beta-pill">BETA</span>
+                  </div>
+                  <p>Análise estratégica e financeira com IA</p>
+                </div>
+              </a>
+            )}
+
             <a className="quick-action-card" href="/feed">
               <div className="quick-action-icon">
                 <Megaphone size={24} aria-hidden="true" />

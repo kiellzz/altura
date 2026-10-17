@@ -1,4 +1,4 @@
-import { LayoutDashboard, Menu, MessageCircle, Megaphone, Rocket, Settings, X } from 'lucide-react'
+import { LayoutDashboard, Menu, MessageCircle, Megaphone, Rocket, Settings, Sparkles, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
 
@@ -16,7 +16,7 @@ export function DashboardNavMenu() {
   const pathname = window.location.pathname
   const items = usuario?.tipo === 'investidor'
     ? [...commonItems.slice(0, 2), { href: '/explorar-rodadas', label: 'Explorar rodadas', icon: Rocket }, ...commonItems.slice(2)]
-    : [...commonItems.slice(0, 2), { href: '/rodadas', label: 'Gerenciar rodada', icon: Rocket }, ...commonItems.slice(2)]
+    : [{ href: '/app/intelligence', label: 'Altura Intelligence (BETA)', icon: Sparkles }, ...commonItems.slice(0, 2), { href: '/rodadas', label: 'Gerenciar rodada', icon: Rocket }, ...commonItems.slice(2)]
 
   useEffect(() => {
     if (!open) return

@@ -12,6 +12,7 @@ export type Route =
   | { page: 'feed' }
   | { page: 'startup-profile'; userId: string; postId?: number }
   | { page: 'conversations' }
+  | { page: 'intelligence' }
 
 export const protectedPages = new Set<Route['page']>([
   'onboarding',
@@ -22,6 +23,7 @@ export const protectedPages = new Set<Route['page']>([
   'feed',
   'startup-profile',
   'conversations',
+  'intelligence',
 ])
 
 export function parseRoute(pathname = window.location.pathname, search = window.location.search): Route {
@@ -33,6 +35,7 @@ export function parseRoute(pathname = window.location.pathname, search = window.
     return { page: 'register', role: tipo === 'startup' || tipo === 'investidor' ? tipo : undefined }
   }
   if (pathname === '/onboarding') return { page: 'onboarding' }
+  if (pathname === '/app/intelligence') return { page: 'intelligence' }
   if (pathname === '/app') return { page: 'app' }
   if (pathname === '/editar-perfil') return { page: 'edit-profile' }
   if (pathname === '/explorar-rodadas') return { page: 'explorar-rodadas' }
@@ -50,7 +53,7 @@ export function parseRoute(pathname = window.location.pathname, search = window.
 export function isKnownAppUrl(url: URL) {
   return [
     '/', '/login', '/cadastro', '/cadastro/startup', '/cadastro/investidor',
-    '/onboarding', '/app', '/editar-perfil', '/explorar-rodadas', '/rodadas', '/feed', '/conversas',
+    '/onboarding', '/app', '/app/intelligence', '/editar-perfil', '/explorar-rodadas', '/rodadas', '/feed', '/conversas',
   ].includes(url.pathname) || /^\/startups\/[^/]+$/.test(url.pathname)
 }
 

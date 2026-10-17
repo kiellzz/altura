@@ -24,6 +24,7 @@ const RoundsManagementPage = lazy(() => import('./components/RoundsManagementPag
 const FeedPage = lazy(() => import('./components/FeedPage').then((module) => ({ default: module.FeedPage })))
 const StartupPublicProfilePage = lazy(() => import('./components/StartupPublicProfilePage').then((module) => ({ default: module.StartupPublicProfilePage })))
 const ConversationsPage = lazy(() => import('./components/ConversationsPage').then((module) => ({ default: module.ConversationsPage })))
+const IntelligencePage = lazy(() => import('./components/IntelligencePage').then((module) => ({ default: module.IntelligencePage })))
 
 export default function App() {
   const { route, direction, isNavigating, isFetching, navigate } = useNavigation()
@@ -58,6 +59,8 @@ export default function App() {
     <StartupPublicProfilePage startupUserId={route.userId} postId={route.postId} onBack={() => navigate('/feed')} onOpenConversations={() => navigate('/conversas')} />
   ) : route.page === 'conversations' ? (
     <ConversationsPage onBack={() => navigate('/app')} onOpenStartup={(userId) => navigate(`/startups/${userId}`)} />
+  ) : route.page === 'intelligence' ? (
+    <IntelligencePage onBack={() => navigate('/app')} />
   ) : (
     <AuthPage mode={route.page === 'login' ? 'login' : 'register'} initialRole={route.page === 'register' ? route.role : undefined} />
   )
