@@ -37,15 +37,13 @@ import { Brand } from './Brand'
 import { DashboardNavMenu } from './DashboardNavMenu'
 import { ThemeToggle } from './ThemeToggle'
 import { useToast } from './ToastProvider'
+import { formatBRL, formatNumber, formatPercent } from '../lib/formatters'
+import { allBenchmarks } from '../metrics/benchmarks'
 
 interface Props {
   onBack: () => void
 }
 
-function formatBRL(value: number | null | undefined): string {
-  if (value === null || value === undefined || isNaN(value)) return 'Não informado'
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-}
 
 function optionalNumber(value: string): number | null {
   if (!value.trim()) return null
@@ -77,6 +75,7 @@ export function IntelligencePage({ onBack }: Props) {
   const [nicho, setNicho] = useState<string>('')
   const [publico, setPublico] = useState<string>('')
   const [diferencial, setDiferencial] = useState<string>('')
+  const [investimentoMarketing, setInvestimentoMarketing] = useState<string>('')
 
   useEffect(() => {
     let active = true
@@ -103,6 +102,7 @@ export function IntelligencePage({ onBack }: Props) {
           setNicho(q.nichoEspecifico)
           setPublico(q.publicoAlvoRegiao)
           setDiferencial(q.diferencialCompetitivo || '')
+          setInvestimentoMarketing(q.investimentoMarketingVendasMensal?.toString() || '')
         } else {
           // Valores padrão baseados no contexto
           if (ctx.segmentoPrincipal) {
@@ -240,6 +240,7 @@ export function IntelligencePage({ onBack }: Props) {
       nichoEspecifico: nicho.trim(),
       publicoAlvoRegiao: publico.trim(),
       diferencialCompetitivo: diferencial.trim() ? diferencial.trim() : null,
+      investimentoMarketingVendasMensal: optionalNumber(investimentoMarketing),
     }
 
     setAnalyzing(true)
@@ -414,6 +415,15 @@ export function IntelligencePage({ onBack }: Props) {
                       onChange={(e) => setDespesa(e.target.value)}
                       required
                     />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="investimentoMarketing">Investimento mensal adicional em marketing e vendas (R$) (opcional)</label>
+                  <p className="form-hint">Use este campo quando a prioridade for expansão nacional; ele entra na despesa projetada, não no saldo atual.</p>
+                  <div className="currency-input-wrap">
+                    <span className="currency-prefix">R$</span>
+                    <input id="investimentoMarketing" type="number" step="any" min="0" placeholder="0,00" value={investimentoMarketing} onChange={(e) => setInvestimentoMarketing(e.target.value)} />
                   </div>
                 </div>
 
@@ -679,7 +689,7 @@ export function IntelligencePage({ onBack }: Props) {
                       </li>
                       <li>
                         <span>Crescimento Mensal:</span>{' '}
-                        <strong>{context?.crescimentoMensal !== null && context?.crescimentoMensal !== undefined ? `${context.crescimentoMensal}%` : 'Não informado'}</strong>
+                        <strong>{formatPercent(context?.crescimentoMensal)}</strong>
                       </li>
                       <li>
                         <span>Meta de Captação:</span> <strong>{formatBRL(context?.metaCaptacao)}</strong>
@@ -699,9 +709,9 @@ export function IntelligencePage({ onBack }: Props) {
                       <li>
                         <span>Caixa Disponível:</span> <strong>{formatBRL(Number(caixa))}</strong>
                       </li>
-                      <li><span>Margem Bruta:</span> <strong>{margemBruta ? `${margemBruta}%` : 'Não informado'}</strong></li>
+                      <li><span>Margem Bruta:</span> <strong>{margemBruta ? formatPercent(Number(margemBruta)) : 'Não informado'}</strong></li>
                       <li><span>CAC Estimado:</span> <strong>{cac ? formatBRL(Number(cac)) : 'Não informado'}</strong></li>
-                      <li><span>Churn Mensal:</span> <strong>{churn ? `${churn}%` : 'Não informado'}</strong></li>
+                      <li><span>Churn Mensal:</span> <strong>{churn ? formatPercent(Number(churn)) : 'Não informado'}</strong></li>
                       <li>
                         <span>Evolução 3 meses:</span>{' '}
                         <strong>{evolucao.replace('_', ' ').toUpperCase()}</strong>
@@ -814,7 +824,7 @@ export function IntelligencePage({ onBack }: Props) {
                     <span>{qualityVerified}</span>
                   </header>
                   <ul className="intelligence-quality-items">
-                    {report.qualidadeDados.criteriosAtendidos.slice(0, 5).map((c, i) => (
+                    {report.qualidadeDados.criteriosAtendidos.map((c, i) => (
                       <li key={i}><CheckCircle2 size={16} /><span>{c}</span></li>
                     ))}
                   </ul>
@@ -826,7 +836,7 @@ export function IntelligencePage({ onBack }: Props) {
                       <span>{qualityMissing}</span>
                     </header>
                     <ul className="intelligence-quality-items">
-                      {report.qualidadeDados.dadosFaltantesOuRecomendados.slice(0, 3).map((d, i) => (
+                    {report.qualidadeDados.dadosFaltantesOuRecomendados.map((d, i) => (
                         <li key={i}><HelpCircle size={16} /><span>{d}</span></li>
                       ))}
                     </ul>
@@ -856,7 +866,7 @@ export function IntelligencePage({ onBack }: Props) {
                     <span>Principais Pontos Fortes</span>
                   </h4>
                   <ul>
-                    {report.visaoGeral.pontosFortes.slice(0, 2).map((p, i) => (
+                    {report.visaoGeral.pontosFortes.map((p, i) => (
                       <li key={i}>{p}</li>
                     ))}
                   </ul>
@@ -868,7 +878,7 @@ export function IntelligencePage({ onBack }: Props) {
                     <span>Principais Pontos de Atenção</span>
                   </h4>
                   <ul>
-                    {report.visaoGeral.pontosAtencao.slice(0, 2).map((p, i) => (
+                    {report.visaoGeral.pontosAtencao.map((p, i) => (
                       <li key={i}>{p}</li>
                     ))}
                   </ul>
@@ -878,7 +888,7 @@ export function IntelligencePage({ onBack }: Props) {
               {report.visaoGeral.limitacoesDados.length > 0 && (
                 <details className="intelligence-inline-details">
                   <summary><Info size={16} /> Limitações desta análise</summary>
-                  <ul>{report.visaoGeral.limitacoesDados.slice(0, 2).map((l, i) => <li key={i}>{l}</li>)}</ul>
+                  <ul>{report.visaoGeral.limitacoesDados.map((l, i) => <li key={i}>{l}</li>)}</ul>
                 </details>
               )}
             </section>
@@ -920,7 +930,7 @@ export function IntelligencePage({ onBack }: Props) {
 
                 <div className="intelligence-metric-box">
                   <span className="metric-label">Margem Bruta</span>
-                  <strong className="metric-value">{report.saudeFinanceira.margemBrutaPercentual !== null ? `${report.saudeFinanceira.margemBrutaPercentual}%` : 'Não informado'}</strong>
+                  <strong className="metric-value">{formatPercent(report.saudeFinanceira.margemBrutaPercentual)}</strong>
                   <small>Quanto sobra após o custo direto de entregar o produto</small>
                 </div>
 
@@ -928,7 +938,7 @@ export function IntelligencePage({ onBack }: Props) {
                   <span className="metric-label">Runway Estimado</span>
                   <strong className="metric-value">
                     {report.saudeFinanceira.runwayMesesEstimado !== null
-                      ? `${report.saudeFinanceira.runwayMesesEstimado} meses`
+                      ? `${formatNumber(report.saudeFinanceira.runwayMesesEstimado)} meses`
                       : 'Sustentável'}
                   </strong>
                   <small>
@@ -949,14 +959,33 @@ export function IntelligencePage({ onBack }: Props) {
                   <div className="intelligence-metric-box"><span className="metric-label">Despesa mensal</span><strong className="metric-value">{formatBRL(report.saudeFinanceira.despesaOperacionalMensal)}</strong><small>Total mensal informado pela startup</small></div>
                   <div className="intelligence-metric-box"><span className="metric-label">Net Burn</span><strong className="metric-value">{formatBRL(report.saudeFinanceira.consumoCaixaNetBurn)}/mês</strong><small>Quanto do caixa é consumido por mês</small></div>
                   <div className="intelligence-metric-box"><span className="metric-label">CAC</span><strong className="metric-value">{formatBRL(report.saudeFinanceira.cacEstimado)}</strong><small>Custo médio para conquistar um cliente</small></div>
-                  <div className="intelligence-metric-box"><span className="metric-label">Churn</span><strong className="metric-value">{report.saudeFinanceira.churnMensalPercentual !== null ? `${report.saudeFinanceira.churnMensalPercentual}%` : 'Não informado'}</strong><small>Parcela de clientes perdida a cada mês</small></div>
+                  <div className="intelligence-metric-box"><span className="metric-label">Churn mensal</span><strong className="metric-value">{formatPercent(report.saudeFinanceira.churnMensalPercentual)}</strong><small>Parcela de clientes perdida a cada mês</small></div>
                   <div className="intelligence-metric-box"><span className="metric-label">Ticket médio</span><strong className="metric-value">{formatBRL(report.saudeFinanceira.ticketMedioEstimado)}</strong><small>Receita média mensal por cliente</small></div>
+                  <div className="intelligence-metric-box"><span className="metric-label">Retenção anual estimada</span><strong className="metric-value">{formatPercent(report.saudeFinanceira.retencaoAnualEstimadaPercentual)}</strong><small>Conversão de (1 − churn mensal)^12</small></div>
+                  <div className="intelligence-metric-box"><span className="metric-label">Payback estimado</span><strong className="metric-value">{report.saudeFinanceira.paybackMesesEstimado != null ? `${formatNumber(report.saudeFinanceira.paybackMesesEstimado)} meses` : 'Não calculável'}</strong><small>CAC / (ticket médio × margem bruta)</small></div>
+                  <div className="intelligence-metric-box"><span className="metric-label">LTV estimado</span><strong className="metric-value">{formatBRL(report.saudeFinanceira.ltvEstimado)}</strong><small>(ticket médio × margem bruta) / churn mensal</small></div>
+                  <div className="intelligence-metric-box"><span className="metric-label">LTV/CAC estimado</span><strong className="metric-value">{report.saudeFinanceira.ltvCacEstimado != null ? `${formatNumber(report.saudeFinanceira.ltvCacEstimado, 2)}x` : 'Não calculável'}</strong><small>Relação entre valor estimado e aquisição</small></div>
                 </div>
                 <div className="intelligence-plain-glossary">
                   <p><strong>Runway:</strong> por quantos meses o caixa sustenta a operação no ritmo atual.</p>
                   <p><strong>Margem bruta:</strong> percentual da receita que sobra após os custos diretos da entrega.</p>
                   <p><strong>Saldo simplificado:</strong> receita menos despesa informada; não é lucro contábil.</p>
                   <p>{report.saudeFinanceira.formulasEPremissas}</p>
+                  {report.saudeFinanceira.alertaRetencao && <p className="intelligence-inline-alert"><strong>Retenção:</strong> {report.saudeFinanceira.alertaRetencao}</p>}
+                  {report.saudeFinanceira.renovacaoInformadaPercentual != null && <p><strong>Renovação informada:</strong> {formatPercent(report.saudeFinanceira.renovacaoInformadaPercentual)} (contratos; comparar com retenção de clientes com cautela).</p>}
+                  {report.saudeFinanceira.alertaSanidadeUnitEconomics && <p className="intelligence-inline-alert"><strong>Sanity check:</strong> {report.saudeFinanceira.alertaSanidadeUnitEconomics}</p>}
+                  <div className="intelligence-methodology-list">
+                    <h4>Como é calculado e referência</h4>
+                    <p><strong>Saldo operacional:</strong> receita base − despesa mensal.</p>
+                    <p><strong>Net burn:</strong> máximo entre zero e o negativo do saldo operacional.</p>
+                    <p><strong>Runway:</strong> caixa disponível ÷ net burn; infinito quando net burn ≤ 0.</p>
+                    <p><strong>Ticket médio:</strong> receita base ÷ clientes ativos.</p>
+                    <p><strong>Retenção anual:</strong> (1 − churn mensal)^12 = {formatPercent(report.saudeFinanceira.retencaoAnualEstimadaPercentual)}.</p>
+                    <p><strong>Payback:</strong> CAC ÷ (ticket médio × margem bruta) = {report.saudeFinanceira.paybackMesesEstimado != null ? `${formatNumber(report.saudeFinanceira.paybackMesesEstimado)} meses` : 'não calculável'}.</p>
+                    <p><strong>LTV:</strong> (ticket médio × margem bruta) ÷ churn mensal = {formatBRL(report.saudeFinanceira.ltvEstimado)}.</p>
+                    <p><strong>LTV/CAC:</strong> LTV ÷ CAC = {report.saudeFinanceira.ltvCacEstimado != null ? `${formatNumber(report.saudeFinanceira.ltvCacEstimado, 2)}x` : 'não calculável'}.</p>
+                    {allBenchmarks().map((benchmark) => <p key={benchmark.metrica + benchmark.contexto}><strong>{benchmark.metrica}:</strong> {benchmark.min !== undefined ? `a partir de ${formatNumber(benchmark.min)}${benchmark.unidade === 'multiplo' ? 'x' : '%'}` : ''}{benchmark.max !== undefined ? ` até ${formatNumber(benchmark.max)}${benchmark.unidade === 'meses' ? ' meses' : benchmark.unidade === 'multiplo' ? 'x' : '%'}` : ''} — {benchmark.contexto}. <a href={benchmark.fonte.url} target="_blank" rel="noreferrer">{benchmark.fonte.autor}, {benchmark.fonte.titulo}</a> <span className="intelligence-source-badge">{benchmark.confianca === 'alta' ? 'Referência de mercado' : 'Regra heurística'}</span></p>)}
+                  </div>
                 </div>
               </details>
             </section>
@@ -997,10 +1026,18 @@ export function IntelligencePage({ onBack }: Props) {
                     return (
                       <div className="intelligence-scenario-display">
                         <p className="intelligence-scenario-desc">{currentScenario.descricaoPremissas}</p>
+                        <div className="intelligence-scenario-premises">
+                          <span>Taxa: <strong>{formatPercent(currentScenario.taxaCrescimentoMensalPercentual)} a.m.</strong></span>
+                          <span>Churn: <strong>{formatPercent(currentScenario.churnMensalPercentual)}</strong></span>
+                          <span>CAC: <strong>{formatBRL(currentScenario.cacEstimado)}</strong></span>
+                          <span>Despesa final: <strong>{formatBRL(currentScenario.despesaFinalMensal)}</strong></span>
+                        </div>
                         <div className="intelligence-projections-grid">
                           <div className="intelligence-proj-box"><span>Receita mensal em 12 meses</span><strong>{formatBRL(currentScenario.receitaProjetada12m)}</strong><small>Valor simulado, não garantido</small></div>
-                          <div className="intelligence-proj-box"><span>Saldo mensal em 12 meses</span><strong>{formatBRL(currentScenario.saldoOperacionalProjetado12m)}</strong><small>Receita simulada menos despesa mantida constante</small></div>
-                          <div className="intelligence-proj-box is-highlight"><span>Caixa ao fim de 12 meses</span><strong>{formatBRL(currentScenario.caixaProjetado12m)}</strong><small>Sem considerar novos aportes</small></div>
+                          <div className="intelligence-proj-box"><span>Saldo mensal em 12 meses</span><strong>{formatBRL(currentScenario.saldoOperacionalProjetado12m)}</strong><small>Receita simulada menos despesa revisada</small></div>
+                          <div className="intelligence-proj-box is-highlight"><span>Caixa ao fim de 12 meses</span><strong>{formatBRL(currentScenario.caixaProjetado12m)}</strong><small>Caixa mensal acumulado com despesas revisadas</small></div>
+                          <div className="intelligence-proj-box"><span>Sanity check da receita</span><strong>{formatNumber(currentScenario.multiploReceitaAtual12m, 2)}x</strong><small>Receita final / receita atual</small></div>
+                          <div className="intelligence-proj-box"><span>Despesa final mensal</span><strong>{formatBRL(currentScenario.despesaFinalMensal)}</strong><small>Base + aquisição/churn + variável + marketing</small></div>
                         </div>
                       </div>
                     )
@@ -1123,6 +1160,15 @@ export function IntelligencePage({ onBack }: Props) {
                   )
                 })}
               </div>
+            </section>
+
+            <section className="intelligence-section-card intelligence-methodology-footer">
+              <div className="intelligence-card-heading">
+                <Info size={22} className="text-primary" />
+                <div><h2>Metodologia e fontes</h2><p>Definições e limites usados pelo diagnóstico.</p></div>
+              </div>
+              <p>Faixas de referência são orientativas, variam por segmento e estágio, e não substituem análise de um profissional de finanças.</p>
+              <ul>{allBenchmarks().map((benchmark) => <li key={benchmark.metrica + benchmark.fonte.url}><a href={benchmark.fonte.url} target="_blank" rel="noreferrer">{benchmark.fonte.autor} — {benchmark.fonte.titulo}</a> ({benchmark.confianca === 'alta' ? 'referência confirmada' : 'regra heurística; validar com a fonte'})</li>)}</ul>
             </section>
 
             {/* Rodapé do Relatório */}

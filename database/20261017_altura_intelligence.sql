@@ -16,6 +16,7 @@ create table if not exists public.startup_intelligence_questionario (
   nicho_especifico varchar(300) not null,
   publico_alvo_regiao varchar(300) not null,
   diferencial_competitivo varchar(500),
+  investimento_marketing_vendas_mensal numeric(15,2),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint questionario_despesa_positiva check (despesa_operacional_mensal >= 0),

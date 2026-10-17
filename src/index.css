@@ -4349,6 +4349,19 @@ html[data-theme='dark'] .proposal-counter-form { border-color: #3D385F; }
   gap: 16px;
 }
 
+.intelligence-scenario-premises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 16px;
+  color: #B8B6CA;
+  font-size: .82rem;
+}
+
+.intelligence-scenario-premises strong {
+  color: #F7F7FF;
+}
+
 .intelligence-proj-box {
   background: #1F1E38;
   border: 1px solid #3C3A5E;
@@ -4380,6 +4393,42 @@ html[data-theme='dark'] .proposal-counter-form { border-color: #3D385F; }
 .intelligence-proj-box small {
   color: #7F7D96;
   font-size: .75rem;
+}
+
+.intelligence-methodology-list,
+.intelligence-methodology-footer {
+  color: #B8B6CA;
+  font-size: .84rem;
+  line-height: 1.55;
+}
+
+.intelligence-methodology-list h4 {
+  margin: 18px 0 8px;
+  color: #F7F7FF;
+}
+
+.intelligence-methodology-list p,
+.intelligence-methodology-footer p {
+  margin: 6px 0;
+}
+
+.intelligence-methodology-list a,
+.intelligence-methodology-footer a {
+  color: #B9B0FF;
+}
+
+.intelligence-source-badge {
+  display: inline-block;
+  margin-left: 6px;
+  border: 1px solid #4A4671;
+  border-radius: 999px;
+  padding: 2px 7px;
+  color: #D6D1FF;
+  font-size: .7rem;
+}
+
+.intelligence-methodology-footer ul {
+  margin: 10px 0 0;
 }
 
 .intelligence-projection-disclaimer {

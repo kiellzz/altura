@@ -70,8 +70,28 @@ public class IntelligenceDto {
             String publicoAlvoRegiao,
 
             @Size(max = 500, message = "O diferencial competitivo deve ter até 500 caracteres.")
-            String diferencialCompetitivo
-    ) {}
+            String diferencialCompetitivo,
+
+            @DecimalMin(value = "0.0", message = "O investimento mensal em marketing e vendas não pode ser negativo.")
+            BigDecimal investimentoMarketingVendasMensal
+    ) {
+        public QuestionnaireData(
+                BigDecimal despesaOperacionalMensal,
+                BigDecimal caixaDisponivel,
+                BigDecimal margemBrutaPercentual,
+                BigDecimal cacEstimado,
+                BigDecimal churnMensalPercentual,
+                String evolucaoFaturamento,
+                String prioridadePrincipal,
+                String nichoEspecifico,
+                String publicoAlvoRegiao,
+                String diferencialCompetitivo
+        ) {
+            this(despesaOperacionalMensal, caixaDisponivel, margemBrutaPercentual, cacEstimado,
+                    churnMensalPercentual, evolucaoFaturamento, prioridadePrincipal, nichoEspecifico,
+                    publicoAlvoRegiao, diferencialCompetitivo, null);
+        }
+    }
 
     public record FinancialIndicators(
             BigDecimal receitaBaseMensal,
@@ -85,6 +105,13 @@ public class IntelligenceDto {
             BigDecimal cacEstimado,
             BigDecimal churnMensalPercentual,
             BigDecimal ticketMedioEstimado,
+            BigDecimal retencaoAnualEstimadaPercentual,
+            BigDecimal renovacaoInformadaPercentual,
+            String alertaRetencao,
+            BigDecimal paybackMesesEstimado,
+            BigDecimal ltvEstimado,
+            BigDecimal ltvCacEstimado,
+            String alertaSanidadeUnitEconomics,
             String formulasEPremissas
     ) {}
 
@@ -107,7 +134,12 @@ public class IntelligenceDto {
             BigDecimal saldoOperacionalProjetado12m,
             BigDecimal caixaProjetado3m,
             BigDecimal caixaProjetado6m,
-            BigDecimal caixaProjetado12m
+            BigDecimal caixaProjetado12m,
+            BigDecimal taxaCrescimentoMensalPercentual,
+            BigDecimal churnMensalPercentual,
+            BigDecimal cacEstimado,
+            BigDecimal despesaFinalMensal,
+            BigDecimal multiploReceitaAtual12m
     ) {}
 
     public record GrowthProjections(

@@ -55,7 +55,8 @@ public class JdbcIntelligenceRepository implements IntelligenceRepository {
                     alter table public.startup_intelligence_questionario
                       add column if not exists margem_bruta_percentual numeric(5,2),
                       add column if not exists cac_estimado numeric(15,2),
-                      add column if not exists churn_mensal_percentual numeric(5,2);
+                      add column if not exists churn_mensal_percentual numeric(5,2),
+                      add column if not exists investimento_marketing_vendas_mensal numeric(15,2);
 
                     create table if not exists public.startup_intelligence_analise (
                       id bigint generated always as identity primary key,
@@ -85,7 +86,8 @@ public class JdbcIntelligenceRepository implements IntelligenceRepository {
         List<QuestionnaireData> results = jdbc.query("""
                 select despesa_operacional_mensal, caixa_disponivel, margem_bruta_percentual,
                        cac_estimado, churn_mensal_percentual, evolucao_faturamento,
-                       prioridade_principal, nicho_especifico, publico_alvo_regiao, diferencial_competitivo
+                       prioridade_principal, nicho_especifico, publico_alvo_regiao, diferencial_competitivo,
+                       investimento_marketing_vendas_mensal
                 from public.startup_intelligence_questionario
                 where usuario_id = ?
                 """, (rs, rowNum) -> mapQuestionnaire(rs), userId);
@@ -98,8 +100,9 @@ public class JdbcIntelligenceRepository implements IntelligenceRepository {
                 insert into public.startup_intelligence_questionario (
                     usuario_id, despesa_operacional_mensal, caixa_disponivel, evolucao_faturamento,
                     margem_bruta_percentual, cac_estimado, churn_mensal_percentual,
-                    prioridade_principal, nicho_especifico, publico_alvo_regiao, diferencial_competitivo, updated_at
-                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())
+                    prioridade_principal, nicho_especifico, publico_alvo_regiao, diferencial_competitivo,
+                    investimento_marketing_vendas_mensal, updated_at
+                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())
                 on conflict (usuario_id) do update set
                     despesa_operacional_mensal = excluded.despesa_operacional_mensal,
                     caixa_disponivel = excluded.caixa_disponivel,
@@ -111,11 +114,12 @@ public class JdbcIntelligenceRepository implements IntelligenceRepository {
                     nicho_especifico = excluded.nicho_especifico,
                     publico_alvo_regiao = excluded.publico_alvo_regiao,
                     diferencial_competitivo = excluded.diferencial_competitivo,
+                    investimento_marketing_vendas_mensal = excluded.investimento_marketing_vendas_mensal,
                     updated_at = now()
                 """,
                 userId, q.despesaOperacionalMensal(), q.caixaDisponivel(), q.evolucaoFaturamento(),
                 q.margemBrutaPercentual(), q.cacEstimado(), q.churnMensalPercentual(),
-                q.prioridadePrincipal(), q.nichoEspecifico(), q.publicoAlvoRegiao(), q.diferencialCompetitivo());
+                q.prioridadePrincipal(), q.nichoEspecifico(), q.publicoAlvoRegiao(), q.diferencialCompetitivo(), q.investimentoMarketingVendasMensal());
         return q;
     }
 
@@ -211,7 +215,8 @@ public class JdbcIntelligenceRepository implements IntelligenceRepository {
                 rs.getString("prioridade_principal"),
                 rs.getString("nicho_especifico"),
                 rs.getString("publico_alvo_regiao"),
-                rs.getString("diferencial_competitivo")
+                rs.getString("diferencial_competitivo"),
+                rs.getBigDecimal("investimento_marketing_vendas_mensal")
         );
     }
 

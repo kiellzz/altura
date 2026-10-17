@@ -12,6 +12,7 @@ export interface QuestionnaireData {
   nichoEspecifico: string
   publicoAlvoRegiao: string
   diferencialCompetitivo?: string | null
+  investimentoMarketingVendasMensal?: number | null
 }
 
 export const questionnaireSchema = z.object({
@@ -72,6 +73,13 @@ export interface FinancialIndicators {
   cacEstimado: number | null
   churnMensalPercentual: number | null
   ticketMedioEstimado: number | null
+  retencaoAnualEstimadaPercentual: number | null
+  renovacaoInformadaPercentual: number | null
+  alertaRetencao: string | null
+  paybackMesesEstimado: number | null
+  ltvEstimado: number | null
+  ltvCacEstimado: number | null
+  alertaSanidadeUnitEconomics: string | null
   formulasEPremissas: string
 }
 
@@ -95,6 +103,11 @@ export interface GrowthScenario {
   caixaProjetado3m: number
   caixaProjetado6m: number
   caixaProjetado12m: number
+  taxaCrescimentoMensalPercentual: number
+  churnMensalPercentual: number | null
+  cacEstimado: number | null
+  despesaFinalMensal: number
+  multiploReceitaAtual12m: number
 }
 
 export interface GrowthProjections {

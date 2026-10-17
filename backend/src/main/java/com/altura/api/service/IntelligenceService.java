@@ -18,7 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Service
 public class IntelligenceService {
@@ -119,10 +123,15 @@ public class IntelligenceService {
         String prompt = buildGeminiPrompt(profile, segmentoPrincipal, questionnaire, fi, gp, qi);
 
         // 5. Chamar Gemini para análise estratégica e qualitativa
-        String rawJson = geminiClient.generateStructuredAnalysis(prompt);
-
-        // 6. Validar estruturalmente a resposta da IA
-        AiAnalysisParsed aiData = parseAndValidateAiResponse(rawJson);
+        // 6. Validar estrutura e números da resposta da IA; duas tentativas no máximo.
+        AiAnalysisParsed aiData = null;
+        for (int attempt = 0; attempt < 2 && aiData == null; attempt++) {
+            String rawJson = geminiClient.generateStructuredAnalysis(prompt);
+            AiAnalysisParsed parsed = parseAndValidateAiResponse(rawJson);
+            if (validateGeneratedText(parsed, fi)) aiData = parsed;
+        }
+        if (aiData == null) aiData = deterministicAiFallback();
+        ExecutiveOverview overview = buildExecutiveOverview(fi, gp, qi, questionnaire);
 
         // 7. Montar o relatório completo integrando cálculos determinísticos + análise IA
         String dataGeracao = Instant.now().toString();
@@ -136,7 +145,7 @@ public class IntelligenceService {
                 qi,
                 fi,
                 gp,
-                aiData.visaoGeral(),
+                overview,
                 aiData.inteligenciaCompetitiva(),
                 aiData.recomendacoes(),
                 questionnaire
@@ -144,6 +153,33 @@ public class IntelligenceService {
 
         // 8. Persistir e retornar
         return intelligenceRepository.saveReport(userId, report, questionnaire);
+    }
+
+    private ExecutiveOverview buildExecutiveOverview(FinancialIndicators fi, GrowthProjections gp,
+                                                      DataQualityIndicator qi, QuestionnaireData q) {
+        List<String> fortes = new ArrayList<>();
+        List<String> atencao = new ArrayList<>();
+        if (fi.saldoOperacionalSimplificado().signum() >= 0) fortes.add("Saldo operacional simplificado positivo no ritmo atual.");
+        if (fi.ticketMedioEstimado() != null) fortes.add("Ticket médio calculado a partir da receita e da base ativa.");
+        if (fi.paybackMesesEstimado() != null && fi.paybackMesesEstimado().compareTo(BigDecimal.valueOf(12)) <= 0
+                && (fi.ltvCacEstimado() == null || fi.ltvCacEstimado().compareTo(BigDecimal.valueOf(3)) >= 0)) {
+            fortes.add("CAC é um ponto forte pelos unit economics estimados.");
+        }
+        if (fortes.isEmpty()) fortes.add("Há uma base de dados operacional para orientar a próxima decisão.");
+        if (fi.churnMensalPercentual() != null && fi.churnMensalPercentual().compareTo(BigDecimal.ONE) > 0) {
+            atencao.add(fi.alertaRetencao() != null ? fi.alertaRetencao() : "Churn mensal exige acompanhamento para SaaS B2B de PMEs.");
+        }
+        if (fi.saldoOperacionalSimplificado().signum() < 0) atencao.add("A operação consome caixa no ritmo atual; acompanhe net burn e runway.");
+        if (fi.alertaSanidadeUnitEconomics() != null) atencao.add(fi.alertaSanidadeUnitEconomics());
+        if (gp.possuiDadosProjecao() && gp.avisoSimulacao().contains("agressivo")) atencao.add("A projeção Base ultrapassa 2x a receita atual em 12 meses.");
+        if (atencao.isEmpty()) atencao.add("Valide a recorrência dos dados antes de expandir as premissas.");
+        List<String> limitacoes = new ArrayList<>(qi.dadosFaltantesOuRecomendados());
+        if (q.cacEstimado() == null || q.churnMensalPercentual() == null || q.margemBrutaPercentual() == null) {
+            limitacoes.add("Payback, LTV e LTV/CAC não podem ser calculados sem CAC, churn, margem e ticket completos.");
+        }
+        String resumo = "A startup apresenta " + (fi.saldoOperacionalSimplificado().signum() >= 0 ? "saldo operacional simplificado positivo" : "consumo líquido de caixa")
+                + " e dados de confiabilidade " + qi.nivelRotulo().toLowerCase(Locale.ROOT) + ". A prioridade deve considerar retenção, eficiência e o custo incremental da expansão.";
+        return new ExecutiveOverview(resumo, fortes, atencao, limitacoes);
     }
 
     private void requireStartup(UUID userId) {
@@ -179,6 +215,9 @@ public class IntelligenceService {
         }
         if (q.caixaDisponivel() == null || q.caixaDisponivel().signum() < 0) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "O saldo disponível em caixa deve ser informado e maior ou igual a zero.");
+        }
+        if (q.investimentoMarketingVendasMensal() != null && q.investimentoMarketingVendasMensal().signum() < 0) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "O investimento mensal em marketing e vendas não pode ser negativo.");
         }
         if (!EVOLUCOES_VALIDAS.contains(q.evolucaoFaturamento())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Selecione uma evolução de faturamento válida.");
@@ -229,6 +268,9 @@ public class IntelligenceService {
                 Saldo Operacional Simplificado: R$ %s (Net Burn Mensal Estimado: R$ %s)
                 Runway Estimado: %s meses (Status: %s)
                 Margem Bruta Informada: %s | CAC Estimado: %s | Churn Mensal: %s | Ticket Médio Estimado: %s
+                Retenção Anual Estimada: %s | Payback Estimado: %s | LTV Estimado: %s | LTV/CAC Estimado: %s
+                Investimento mensal adicional em marketing/vendas: %s
+                Regra de CAC: só recomende otimizar CAC se payback > 12 meses ou LTV/CAC < 3; caso contrário, trate CAC como ponto forte.
                 Evolução do Faturamento nos Últimos 3 Meses: %s
                 Prioridade Estratégica Principal: %s
                 Nicho Específico: %s
@@ -294,6 +336,11 @@ public class IntelligenceService {
                 fi.cacEstimado() != null ? "R$ " + fi.cacEstimado() : "Não informado",
                 fi.churnMensalPercentual() != null ? fi.churnMensalPercentual() + "%" : "Não informado",
                 fi.ticketMedioEstimado() != null ? "R$ " + fi.ticketMedioEstimado() : "Não calculável",
+                fi.retencaoAnualEstimadaPercentual() != null ? fi.retencaoAnualEstimadaPercentual() + "%" : "Não calculável",
+                fi.paybackMesesEstimado() != null ? fi.paybackMesesEstimado() + " meses" : "Não calculável",
+                fi.ltvEstimado() != null ? "R$ " + fi.ltvEstimado() : "Não calculável",
+                fi.ltvCacEstimado() != null ? fi.ltvCacEstimado() + "x" : "Não calculável",
+                q.investimentoMarketingVendasMensal() != null ? "R$ " + q.investimentoMarketingVendasMensal() : "Não informado",
                 q.evolucaoFaturamento(),
                 q.prioridadePrincipal(),
                 q.nichoEspecifico(),
@@ -336,5 +383,33 @@ public class IntelligenceService {
             log.error("Erro ao validar schema JSON retornado pelo Gemini: {}", e.getMessage(), e);
             throw new ApiException(HttpStatus.BAD_GATEWAY, "A resposta do provedor de inteligência artificial não atendeu ao schema esperado.");
         }
+    }
+
+    private boolean validateGeneratedText(AiAnalysisParsed response, FinancialIndicators fi) {
+        List<Double> known = new ArrayList<>();
+        Stream.of(fi.receitaBaseMensal(), fi.despesaOperacionalMensal(), fi.saldoOperacionalSimplificado(), fi.consumoCaixaNetBurn(),
+                        fi.margemBrutaPercentual(), fi.cacEstimado(), fi.churnMensalPercentual(), fi.ticketMedioEstimado(),
+                        fi.retencaoAnualEstimadaPercentual(), fi.paybackMesesEstimado(), fi.ltvEstimado(), fi.ltvCacEstimado())
+                .filter(Objects::nonNull).map(java.math.BigDecimal::doubleValue).forEach(known::add);
+        String text = response.visaoGeral().resumoExecutivo() + " " + String.join(" ", response.visaoGeral().pontosFortes()) + " " + String.join(" ", response.visaoGeral().pontosAtencao())
+                + " " + response.inteligenciaCompetitiva().contextualizacaoNicho() + " " + String.join(" ", response.inteligenciaCompetitiva().potenciaisVantagensCompetitivas())
+                + " " + String.join(" ", response.inteligenciaCompetitiva().riscosMercado()) + " " + String.join(" ", response.inteligenciaCompetitiva().oportunidadesPosicionamento())
+                + " " + response.recomendacoes().stream().map(StrategicRecommendation::descricao).reduce("", (a, b) -> a + " " + b);
+        Matcher matcher = Pattern.compile("\\b\\d+(?:[.,]\\d+)?\\b").matcher(text);
+        while (matcher.find()) {
+            double candidate = Double.parseDouble(matcher.group().replace(',', '.'));
+            if (known.stream().noneMatch(number -> Math.abs(number - candidate) < 0.011)) return false;
+        }
+        return true;
+    }
+
+    private AiAnalysisParsed deterministicAiFallback() {
+        return new AiAnalysisParsed(
+                new ExecutiveOverview("Resumo gerado sem IA: consulte as métricas calculadas e as flags de regras para a decisão.",
+                        List.of("Métricas calculadas deterministicamente a partir dos dados informados."),
+                        List.of("O texto qualitativo da IA não foi validado; use os indicadores numéricos."), List.of()),
+                new CompetitiveIntelligence("Contexto competitivo não redigido porque a resposta numérica não passou na validação.", List.of("Categorias do segmento informado"),
+                        "Análise preliminar sem busca externa.", List.of(), List.of(), List.of()),
+                List.of(new StrategicRecommendation("Alta prioridade", "Validar os dados financeiros", "Revise os inputs e as métricas determinísticas antes de decidir.", "Fallback acionado após validação do texto.")));
     }
 }
